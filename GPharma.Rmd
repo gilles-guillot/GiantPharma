@@ -1,0 +1,79 @@
+---
+title: "Diabetic retinopathy"
+subtitle: "Optimization of Brolucizumab phase II clinical program"
+author: | 
+  | Gilles Guillot
+date: |
+  | `r format(Sys.time())`
+output: 
+  beamer_presentation: 
+theme: "Madrid"
+colortheme: "beetle"
+fonttheme: "structurebold"
+header-includes:
+   - \usepackage{amsmath}
+   - \usepackage{manfnt}
+   - \definecolor{OliveGreen}{cmyk}{0.64,0,0.95,0.40}
+   - \setbeamercolor{math text}{fg=OliveGreen}
+includes:
+      in_header: header_pagenrs.tex
+---
+
+Background
+==========
+
+* Clinical trials are costly  ($50,000 per patient in oncology) and time consuming
+* Often carried out with delays and cost overruns
+    * screening failure
+    * under recruitment
+    * drop out
+* Clinical trial data of varying quality
+    * lack of screening oversight (low screening failure rate)
+    * trial patients not representative of target population (high screening failure rate) 
+    * departure from trial protocol
+
+Clinical program optimization problem
+=======
+
+Identify physicians and trial sites likely to provide 
+
+* high quality trial data
+* complying with budget
+* on time
+
+Clinical program optimization problem (cont')
+======= 
+
+*Best predictor of performance in the future is performance in the past.* 
+
+\bigskip 
+
+
+Data analytics objectives: 
+
+* Identify *performance variables* in database
+* Look for  physicians and trial sites best in terms of those variables
+
+
+
+Data at hand
+============
+
+Method
+======
+
+Result
+======
+
+
+
+
+Conclusion
+==========
+
+Supplementary material
+======================
+
+\bigskip
+\centerline{\color{red} THANK YOU!}
+
