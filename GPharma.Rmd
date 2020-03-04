@@ -10,6 +10,7 @@ output:
 theme: "Madrid"
 colortheme: "beetle"
 fonttheme: "structurebold"
+urlcolor: blue
 header-includes:
    - \usepackage{amsmath}
    - \usepackage{manfnt}
@@ -18,6 +19,7 @@ header-includes:
 includes:
       in_header: header_pagenrs.tex
 ---
+
 
 Background
 ==========
@@ -51,17 +53,70 @@ Clinical program optimization problem (cont')
 
 Data analytics objectives: 
 
-* Identify *performance variables* in database
-* Look for  physicians and trial sites best in terms of those variables
+* Identify *performance indicators* in database
+* Extract signal from data
+* Identify physicians and trial sites best in terms of those indicators
 
 
 
 Data at hand
 ============
 
+Excel file [Health_Insights_Case_Study__TSO](https://github.com/gilles-guillot/GiantPharma/blob/master/Health_Insights_Case_Study__TSO.xlsx) containing three datasets (sheets) 
+
+* Set A:  139 US physicians 
+    * some replicates in `gpharma_HCP_ID`
+    * `Patient_Count`
+    * 11 specialties  incl. `OPHTHALMOLOGY`
+    * admin. / geog. data
+
+Data at hand (cont')
+============    
+
+* Set B: 365 contributions to studies
+     * Contribution = `PI` working in a `CENTER`
+     * Performance indicators: 
+         * `pat_TARGET_TREATMENT` and  `pat_ENTERED_TREATMENT`
+         * `# of competitor trials by PI (active)`
+         * `# of Supporting Staff`
+         * `PI Tier` 1,2,3
+         * `PI Risk Score` H/M/L
+    * Admin. / geog. data     
+    * Uninformative columns:    
+        * `Trial_STATUS_DESC` all completed
+        * `Performance` ratio of `ENTERED`/`TARGET`
+        * `PI  Availability` fully missing
+
+Data at hand (cont')
+============    
+
+* Set C: correspondance `gpharma_HCP_ID` (set A) to `Doctor ID` (set B)
+
+* PI Affiliation: count of occurence of physicians
+
+
+Big data usually defined as: large, complex structure, real-time, messy 
+
 Method
 ======
 
+
+* Set A 
+    * `Patient_Count` not documented
+    * does not seem to match any of 
+        * `pat_TARGET_TREATMENT` or  
+        * `pat_ENTERED_TREATMENT`
+        * even after various summations 
+* Set C document link between A and B   
+* Sheet "PI Affiliation" 
+    * `Count of HCP_Last_Name`  not documented 
+    * does not seem to match physician occurences in A or B 
+   
+
+* Only Set B considered in the sequel
+  
+    
+    
 Result
 ======
 
@@ -74,6 +129,15 @@ Conclusion
 Supplementary material
 ======================
 
+All documents available on the github repository [GiantPharma](https://github.com/gilles-guillot/GiantPharma)
+
+* R code for data analysis:  [load.R](https://github.com/gilles-guillot/GiantPharma/blob/master/R/load.R)
+* Slides in R markdown under Rstudio:  [GPharma.Rmd](https://github.com/gilles-guillot/GiantPharma/blob/master/GPharma.Rmd)
+
+\bigskip
+\bigskip
+\bigskip
+\bigskip
 \bigskip
 \centerline{\color{red} THANK YOU!}
 

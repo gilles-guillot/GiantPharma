@@ -17,18 +17,16 @@ if(!('readxl' %in% installed.packages())) install.packages('readxl')
 library(readxl)
 library(dplyr)
 
-A = read_excel('../Health_Insights_Case_Study__TSO.xlsx',sheet="Set A")
-B = read_excel('../Health_Insights_Case_Study__TSO.xlsx',sheet="Set B")
-C = read_excel('../Health_Insights_Case_Study__TSO.xlsx',sheet="Set C")
-affil = read_excel('../Health_Insights_Case_Study__TSO.xlsx',
+A = read_excel('./Health_Insights_Case_Study__TSO.xlsx',sheet="Set A")
+B = read_excel('./Health_Insights_Case_Study__TSO.xlsx',sheet="Set B")
+C = read_excel('./Health_Insights_Case_Study__TSO.xlsx',sheet="Set C")
+affil = read_excel('./Health_Insights_Case_Study__TSO.xlsx',
                    sheet="PI Affliation",col_types=c("numeric","numeric"))
 affil = affil[-nrow(affil),] # contains sum of last column
-
-## correcting a typo in B
-B$Performance[20:22]
-# plot(as.numeric(B$Performance),
-# B$pat_ENTERED_TREATMENT/B$pat_TARGET_TREATMENT) ; abline(0,1)
-B$Performance = B$pat_ENTERED_TREATMENT / B$pat_TARGET_TREATMENT
+## B$Performance[20:22]
+## plot(as.numeric(B$Performance),
+## B$pat_ENTERED_TREATMENT/B$pat_TARGET_TREATMENT) ; abline(0,1)
+B$Performance = B$pat_ENTERED_TREATMENT / B$pat_TARGET_TREATMENT # correcting a typo in B
 
 A = A[,c("gpharma_HCP_ID",
          "physician_last_name",
@@ -60,25 +58,7 @@ for(i in  1:nrow(A))
 }
 A$Doctor_ID = A_doctid
 
-## newt chunk does not work as some ID are missing
-## completing B with column gpharma_HCP_ID
-# B_hcpid = numeric(nrow(B))
-# for(i in  1:nrow(B))
-# {
-#   j = which( C$`Doctor ID(Set B)` == B$Doctor_ID[i] ) 
-#   if(length(j) > 1)
-#   { 
-#     print(C[j,
-#             c("HCP_First_Name","HCP_Last_Name",
-#               "gpharma_HCP_ID","Doctor ID(Set B)")])
-#     print('')
-#     if(length(unique( C$`Doctor ID(Set B)`[j])) == 1)
-#     { j = j[1]}else
-#       stop()
-#   }
-#   A_doctid[i] = C$`Doctor ID(Set B)`[j]
-# }
-# A$Doctor_ID = A_doctid
+
 
 #####################################
 ## understanding info and structure
