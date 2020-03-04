@@ -1,1 +1,1 @@
-# GiantPharma
+# GPharma clinical program optimization
