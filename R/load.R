@@ -58,6 +58,18 @@ for(i in  1:nrow(A))
 }
 A$Doctor_ID = A_doctid
 
+## Finding ophthalmologists in B
+B$Opht = rep(NA,nrow(B))
+for(i in 1:nrow(B))
+{
+  if(B$Doctor_ID[i] %in% A$Doctor_ID)
+  {
+    subs = which(A$Doctor_ID==B$Doctor_ID[i])
+    #if(length(subs)>1) print(A$physician_specialty_desc[subs]) # print(c(i,subs))
+    B$Opht[i] = ifelse(A$physician_specialty_desc[subs[1]]=='OPHTHALMOLOGY',
+                     TRUE,FALSE)
+  }
+}
 
 
 #####################################
@@ -154,6 +166,61 @@ mean(mytier!=B$`PI Tier`)
 table(B$`PI Tier`,B$`PI Risk Score`)
 table(B$`PI Tier`)
 table(B$`PI Risk Score`)
+
+# Tier?
+par(mfrow=c(1,3))
+hist(B$Performance[B$`PI Tier`==1])
+hist(B$Performance[B$`PI Tier`==2])
+hist(B$Performance[B$`PI Tier`==3])
+
+par(mfrow=c(1,3))
+hist(B$pat_ENTERED_TREATMENT[B$`PI Tier`==1])
+hist(B$pat_ENTERED_TREATMENT[B$`PI Tier`==2])
+hist(B$pat_ENTERED_TREATMENT[B$`PI Tier`==3])
+
+par(mfrow=c(1,3))
+hist(B$`# of competitor trials by PI (active)`[B$`PI Tier`==1])
+hist(B$`# of competitor trials by PI (active)`[B$`PI Tier`==2])
+hist(B$`# of competitor trials by PI (active)`[B$`PI Tier`==3])
+
+par(mfrow=c(1,3))
+hist(B$`# of Supporting Staff`[B$`PI Tier`==1])
+hist(B$`# of Supporting Staff`[B$`PI Tier`==2])
+hist(B$`# of Supporting Staff`[B$`PI Tier`==3])
+
+# Risk score
+par(mfrow=c(1,3))
+hist(B$Performance[B$`PI Risk Score`==1])
+hist(B$Performance[B$`PI Risk Score`==2])
+hist(B$Performance[B$`PI Risk Score`==3])
+
+par(mfrow=c(1,3))
+hist(B$pat_ENTERED_TREATMENT[B$`PI Risk Score`==1])
+hist(B$pat_ENTERED_TREATMENT[B$`PI Risk Score`==2])
+hist(B$pat_ENTERED_TREATMENT[B$`PI Risk Score`==3])
+
+par(mfrow=c(1,3))
+hist(B$`# of competitor trials by PI (active)`[B$`PI Risk Score`==1])
+hist(B$`# of competitor trials by PI (active)`[B$`PI Risk Score`==2])
+hist(B$`# of competitor trials by PI (active)`[B$`PI Risk Score`==3])
+
+par(mfrow=c(1,3))
+hist(B$`# of Supporting Staff`[B$`PI Risk Score`==1])
+hist(B$`# of Supporting Staff`[B$`PI Risk Score`==2])
+hist(B$`# of Supporting Staff`[B$`PI Risk Score`==3])
+
+
+##
+pairs(B_Opht[,8:12])
+
+
+
+
+
+
+
+
+
 
 
 

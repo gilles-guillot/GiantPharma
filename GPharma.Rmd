@@ -1,6 +1,5 @@
 ---
-title: "Diabetic retinopathy"
-subtitle: "Optimization of Brolucizumab phase II clinical program"
+title: "Optimization of clinical program"
 author: | 
   | Gilles Guillot
 date: |
@@ -10,7 +9,7 @@ output:
 theme: "Madrid"
 colortheme: "beetle"
 fonttheme: "structurebold"
-urlcolor: blue
+urlcolor: OliveGreen
 header-includes:
    - \usepackage{amsmath}
    - \usepackage{manfnt}
@@ -19,7 +18,9 @@ header-includes:
 includes:
       in_header: header_pagenrs.tex
 ---
-
+```{r,include=FALSE}
+source("./R/analytics.R")
+```
 
 Background
 ==========
@@ -27,12 +28,26 @@ Background
 * Clinical trials are costly  ($50,000 per patient in oncology) and time consuming
 * Often carried out with delays and cost overruns
     * screening failure
-    * under recruitment
-    * drop out
+    * under-recruitment
+    * drop-out
 * Clinical trial data of varying quality
     * lack of screening oversight (low screening failure rate)
     * trial patients not representative of target population (high screening failure rate) 
     * departure from trial protocol
+
+Under-recruitment at a glance 
+=======
+
+
+```{r,echo=FALSE,fig.height=11,fig.width=16}
+ggplot(B,aes(x=pat_TARGET_TREATMENT,y=pat_ENTERED_TREATMENT,
+             color=Spec)) + 
+  geom_jitter(alpha=0.5,size=5,width = 0.2, height = 0.2) +
+  xlab('Target patient number') + 
+  ylab('Number patients entered') + theme_grey(base_size = 28) +
+  geom_abline(slope=1,intercept=0,color='red',size=0.3)
+ # theme(axis.text=element_text(size=30))
+```
 
 Clinical program optimization problem
 =======
@@ -42,13 +57,18 @@ Identify physicians and trial sites likely to provide
 * high quality trial data
 * complying with budget
 * on time
+\bigskip 
+\bigskip 
+\bigskip 
+
+
+*Best predictor of performance in the future is performance in the past.* 
+
 
 Clinical program optimization problem (cont')
 ======= 
 
-*Best predictor of performance in the future is performance in the past.* 
 
-\bigskip 
 
 
 Data analytics objectives: 
@@ -59,43 +79,54 @@ Data analytics objectives:
 
 
 
-Data at hand
+
+Material 
 ============
 
-Excel file [Health_Insights_Case_Study__TSO](https://github.com/gilles-guillot/GiantPharma/blob/master/Health_Insights_Case_Study__TSO.xlsx) containing three datasets (sheets) 
 
-* Set A:  139 US physicians 
-    * some replicates in `gpharma_HCP_ID`
-    * `Patient_Count`
-    * 11 specialties  incl. `OPHTHALMOLOGY`
-    * admin. / geog. data
 
-Data at hand (cont')
+**Set A**:  139 US physicians 
+
+* some replicates in `gpharma_HCP_ID`
+* `Patient_Count`
+* 11 specialties  incl. `OPHTHALMOLOGY`
+* admin. / geog. data
+
+Material  (cont')
 ============    
 
-* Set B: 365 contributions to studies
-     * Contribution = `PI` working in a `CENTER`
-     * Performance indicators: 
-         * `pat_TARGET_TREATMENT` and  `pat_ENTERED_TREATMENT`
-         * `# of competitor trials by PI (active)`
-         * `# of Supporting Staff`
-         * `PI Tier` 1,2,3
-         * `PI Risk Score` H/M/L
-    * Admin. / geog. data     
-    * Uninformative columns:    
-        * `Trial_STATUS_DESC` all completed
-        * `Performance` ratio of `ENTERED`/`TARGET`
-        * `PI  Availability` fully missing
+**Set B**: 365 contributions to studies (`PI` working in a `CENTER`)
 
-Data at hand (cont')
-============    
+* Performance indicators: 
+    * `pat_TARGET_TREATMENT` and  `pat_ENTERED_TREATMENT`
+    * `# of competitor trials by PI (active)`
+    * `# of Supporting Staff` 
+    * `PI Tier` 1,2,3
+        * unclear ordering, not documented
+        * not obviously related other variables
+    * `PI Risk Score` H/M/L
+        * not documented
+        * not obviously related other variables
+        * 97\% have `L`
+        * can be converted into numerical `PI Reliability score` 1/2/3
+* Admin./geog. data$^*$     
+* Uninformative columns:    
+    * `Trial_STATUS_DESC` all completed$^*$
+    * `Performance` ratio of `ENTERED`/`TARGET`
+    * `PI  Availability` fully missing
 
-* Set C: correspondance `gpharma_HCP_ID` (set A) to `Doctor ID` (set B)
+<!-- Data at hand (cont') -->
+<!-- ============     -->
 
-* PI Affiliation: count of occurence of physicians
+<!-- * Set C: correspondance `gpharma_HCP_ID` (set A) to `Doctor ID` (set B) -->
+
+<!-- * PI Affiliation: count of occurence of physicians -->
+
+<!-- \bigskip  -->
+<!-- \bigskip  -->
 
 
-Big data usually defined as: large, complex structure, real-time, messy 
+<!-- **Big data** usually defined as: **large, complex structure, real-time and messy**  -->
 
 Method
 ======
@@ -103,41 +134,115 @@ Method
 
 * Set A 
     * `Patient_Count` not documented
-    * does not seem to match any of 
+    * does not seem to relate in a simple way to  
         * `pat_TARGET_TREATMENT` or  
-        * `pat_ENTERED_TREATMENT`
+        * `pat_ENTERED_TREATMENT` in set C 
         * even after various summations 
 * Set C document link between A and B   
 * Sheet "PI Affiliation" 
     * `Count of HCP_Last_Name`  not documented 
-    * does not seem to match physician occurences in A or B 
+    * does not seem to match physician occurences in set A or B 
+   
+Method (cont')
+======
+
+* Restrict analysis to 274 rows (out of 365) of set B  with **opthalmologists** (requires to cross info from set A and C)
+
    
 
-* Only Set B considered in the sequel
-  
+
+* **Machine Learning / econometrics** approaches based on **time series** model not feasible here      
+
+* Purely exploratory/descriptive approach
     
-    
-Result
+
+Method (cont')
 ======
 
 
 
+* Consider 
+    * `Performance`, 
+    * `# of competitor trials by PI`, 
+    * `# of Supporting Staff`, 
+    * `PI Tier`, 
+    * `PI Reliability Score`
+* For each physician: compute average of variables above across studies
 
-Conclusion
+* Define `Score` as 
+
+$$\mbox{Score = mean (Perf, \#Trials, \#Support staff, Tier, Reliability)}$$
+
+
+Results 
+===========
+
+
+
+\tiny 
+
+```{r,echo=FALSE}
+kable(B_Opht_ag[order(B_Opht_ag$Score,decreasing = TRUE)[1:20],
+                c("PI_FORENAME","PI_SURNAME","CENTER_NAME",
+                  #"Performance",
+                  #"# of competitor trials by PI (active)",
+                  #"# of Supporting Staff",
+                  #"PI Tier",
+                  #"PI Reliability Score",
+                  "Score")], row.names=FALSE)
+```
+
+
+\normalsize
+
+Results (cont')
+====
+
+```{r,echo=FALSE,fig.height=9,fig.width=14}
+DF = B_Opht_ag[order(B_Opht_ag$Score,decreasing = TRUE)[1:20],]
+DF = data.frame(Name=factor(paste(DF$PI_FORENAME,DF$PI_SURNAME)),
+                Score=DF$Score , Performance=DF$Performance)
+ggplot(DF,aes(x=reorder(Name,Score),y=Score,fill=Performance)) + 
+  geom_bar(position = "dodge",stat="identity") + 
+  coord_flip() + xlab('')+ theme_grey(base_size = 22) 
+```
+
+
+
+Data/Method criticism: 
 ==========
 
-Supplementary material
+
+* Room for improvement
+* Does not lend itself to evaluation/validation 
+    * no estimate of precision
+    * no estimate of uncertainty 
+* Approach not rooted in a a formal **decision theory** framework   
+    * `Score` needs to be objectively defined through  **utilities**, **penalties** derived from **real costs** and **business objectives**
+     
+Prospect for improvement:
+===========================
+
+* More exploratory analysis
+* Move towards decision theoretic approach
+* Move towards use of **time series** data
+
+Supplementary information
 ======================
 
-All documents available on the github repository [GiantPharma](https://github.com/gilles-guillot/GiantPharma)
+All material temporarily available on github repository [https://github.com/gilles-guillot/GiantPharma](https://github.com/gilles-guillot/GiantPharma)
 
-* R code for data analysis:  [load.R](https://github.com/gilles-guillot/GiantPharma/blob/master/R/load.R)
-* Slides in R markdown under Rstudio:  [GPharma.Rmd](https://github.com/gilles-guillot/GiantPharma/blob/master/GPharma.Rmd)
+* R code
+    * data loading and formatting:  [load.R](https://github.com/gilles-guillot/GiantPharma/blob/master/R/load.R)
+    * data analytics:  [analytics.R](https://github.com/gilles-guillot/GiantPharma/blob/master/R/analytics.R)
+* Slides
+    * R markdown:  [GPharma.Rmd](https://github.com/gilles-guillot/GiantPharma/blob/master/GPharma.Rmd)
+    * Pdf: [Gpharma.pdf](https://github.com/gilles-guillot/GiantPharma/blob/master/GPharma.pdf)
 
 \bigskip
 \bigskip
 \bigskip
 \bigskip
 \bigskip
-\centerline{\color{red} THANK YOU!}
+\centerline{\color{red} \Large THANK YOU}
 
